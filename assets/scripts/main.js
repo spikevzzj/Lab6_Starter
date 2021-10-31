@@ -5,7 +5,10 @@
 const recipes = [
   'https://introweb.tech/assets/json/ghostCookies.json',
   'https://introweb.tech/assets/json/birthdayCake.json',
-  'https://introweb.tech/assets/json/chocolateChip.json'
+  'https://introweb.tech/assets/json/chocolateChip.json',
+  'assets/recipes/pizza.json',
+  'assets/recipes/cake.json',
+  'assets/recipes/fries.json'
 ];
 
 // Once all of the recipes that were specified above have been fetched, their
@@ -39,10 +42,27 @@ async function fetchRecipes() {
     // callback function to resolve this promise. If there's any error fetching any of the items, call
     // the reject(false) function.
 
+
     // For part 2 - note that you can fetch local files as well, so store any JSON files you'd like to fetch
     // in the recipes folder and fetch them from there. You'll need to add their paths to the recipes array.
 
     // Part 1 Expose - TODO
+    
+    let list = [];
+    for(let i = 0; i < recipes.length; i++){
+      fetch(recipes[i])
+      .then(response => response.json())
+      .then(data => {list.push(data);
+        if(recipes.length == list.length){
+        recipeData.dataList = list;
+        resolve(true)
+        }
+      })
+      .catch((error) => {console.error('Error', 'error');
+      reject(false);
+      });
+    }
+
   });
 }
 
@@ -54,6 +74,18 @@ function createRecipeCards() {
   // show any others you've added when the user clicks on the "Show more" button.
 
   // Part 1 Expose - TODO
+
+  let main = document.querySelector('main');
+  for (let i = 0; i < recipeData.dataList.length; i++) {
+    let newRecipe = document.createElement('recipe-card');
+    newRecipe.data = recipeData.dataList[i];
+    if(i >= 3){
+      newRecipe.className = 'hidden';
+      newRecipe.style.display = 'none';
+    }
+    main.appendChild(newRecipe);
+  }
+  
 }
 
 function bindShowMore() {
@@ -65,4 +97,23 @@ function bindShowMore() {
   // in the recipeData object where you stored them/
 
   // Part 2 Explore - TODO
+
+  let button = document.querySelector('button');
+  let recipelist = document.getElementsByClassName('hidden');
+  button.addEventListener('click', expand)
+
+  function expand(){
+    if(button.textContent == 'Show more'){
+      button.textContent = 'Show less';
+      for(let i = 0; i < recipelist.length; i++){
+        recipelist[i].style.display = 'inline';
+      }
+    }
+    else{
+      button.textContent = 'Show more';
+      for(let j = 0; j < recipelist.length; j++){
+        recipelist[j].style.display = 'none';
+      }
+    }
+  }
 }
